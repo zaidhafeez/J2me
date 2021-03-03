@@ -6,12 +6,12 @@
 
 import javax.microedition.midlet.*;
 import javax.microedition.lcdui.*;
-import java.util.*;
-import java.io.IOException;
+import javax.microedition.lcdui.game.Sprite;
 
 /**
- * @author ZMQ-10
+ * @author zaid
  */
+
 public class MovingObject extends MIDlet implements CommandListener {
     
     
@@ -110,6 +110,9 @@ class MovingCanvas extends Canvas implements Runnable, CommandListener{
     int xBounds, yBounds, wBounds, hBounds;
     int positionChange;
     final int BA_BOUNCE = 1;
+    Sprite A;
+    Sprite B;
+    static int SPRITE_H_W = 48;
     
     
     
@@ -165,36 +168,47 @@ class MovingCanvas extends Canvas implements Runnable, CommandListener{
     }
 
     protected  void paint(Graphics graphics){
-        
+        ;
         graphics.setColor(255, 255, 255);
         graphics.fillRect(0, 0, getWidth(), getHeight());
         graphics.setColor(0, 255, 0);
         graphics.fillArc(XPosition, YPosition, getWidth()/ 2, getHeight()/2, 0, 360);
         graphics.setColor(255,0,0);
-//        graphics.fillArc(90, 50, 10, 10, 0, 360);
+        graphics.fillArc(90, 50, 10, 10, 0, 360);
     }
     
     protected void runGame(){
         checkBoundaries();
+//        collision();
         switch(positionChange){
             case LEFT:
-                XPosition -= xVelocity;
+                XPosition  -= xVelocity;
+//                YPosition  -= yVelocity;
                 break;
             case RIGHT:
                  XPosition += xVelocity;
+//                 YPosition += yVelocity;
                 break;
             case UP:
                 YPosition -= yVelocity;
+//                XPosition -= xVelocity;
             case DOWN:
                 YPosition += yVelocity;
+//                XPosition += xVelocity;
             
             
         }
         repaint();
     }
     
-    public void checkBoundaries(){
-        
+//    public boolean collision(Sprite s){
+//        
+//        s.collidesWith(s, true)
+//        
+//    }
+    
+    public int checkBoundaries(){
+        //BOUNDS
         if(XPosition < xBounds){
             XPosition = xBounds;
             xVelocity = -xVelocity;
@@ -215,8 +229,30 @@ class MovingCanvas extends Canvas implements Runnable, CommandListener{
             yVelocity = -yVelocity;
             
         }
-        
+
+//     if((XPosition + getWidth()/2) < xBounds){
+//        
+//        XPosition = xBounds + wBounds;
+//        
+//    }
+//    if(XPosition  > (xBounds + wBounds)){
+//        XPosition = xBounds - getWidth()/2;
+//    }
+//    if((YPosition + getHeight()/2) < yBounds){
+//        
+//        YPosition = yBounds + hBounds;
+//        
+//    }
+//    if(YPosition  > (yBounds + hBounds)){
+//        YPosition = yBounds - getWidth()/2;
+//    } 
+    if((XPosition + width) < xBounds || XPosition > wBounds || (YPosition + height) < yBounds || YPosition > yBounds){
+        return 1;
     }
+              return 0;  
+    }
+    
+    
     
     
     
@@ -252,10 +288,5 @@ class MovingCanvas extends Canvas implements Runnable, CommandListener{
             
         }
         
-    }
-      
-    
-    
-    
-    
+    }  
 }
