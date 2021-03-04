@@ -6,12 +6,13 @@
 
 import javax.microedition.midlet.*;
 import javax.microedition.lcdui.*;
-import javax.microedition.lcdui.game.Sprite;
+import java.util.*;
+import java.io.IOException;
+import javax.microedition.m3g.RayIntersection;
 
 /**
- * @author zaid
+ * @author ZMQ-10
  */
-
 public class MovingObject extends MIDlet implements CommandListener {
     
     
@@ -51,7 +52,7 @@ public class MovingObject extends MIDlet implements CommandListener {
     
     public void startApp() {
         
-        display.setCurrent(form);
+        display.setCurrent(form); 
         
     }
     
@@ -110,9 +111,9 @@ class MovingCanvas extends Canvas implements Runnable, CommandListener{
     int xBounds, yBounds, wBounds, hBounds;
     int positionChange;
     final int BA_BOUNCE = 1;
-    Sprite A;
-    Sprite B;
-    static int SPRITE_H_W = 48;
+    int score;
+    int distance;
+    static int xTest, yTest,wTest,hTest;
     
     
     
@@ -127,6 +128,9 @@ class MovingCanvas extends Canvas implements Runnable, CommandListener{
         XPosition = getWidth() / 3;
         YPosition = getHeight() / 3;
         
+        width = getWidth() / 5;
+        height = getHeight() /5; 
+        
         xVelocity = 2;
         yVelocity = 2;
         
@@ -135,6 +139,13 @@ class MovingCanvas extends Canvas implements Runnable, CommandListener{
         
         wBounds = getWidth();
         hBounds = getHeight();
+        
+        xTest = getWidth()/16;
+        yTest = getHeight()/16;
+        wTest = getWidth()/5;
+        hTest = getWidth()/5;
+        
+        score = 0;
         
         addCommand(exit);
         setCommandListener(this);
@@ -168,54 +179,65 @@ class MovingCanvas extends Canvas implements Runnable, CommandListener{
     }
 
     protected  void paint(Graphics graphics){
-        ;
+        
         graphics.setColor(255, 255, 255);
         graphics.fillRect(0, 0, getWidth(), getHeight());
         graphics.setColor(0, 255, 0);
-        graphics.fillArc(XPosition, YPosition, getWidth()/ 2, getHeight()/2, 0, 360);
+        graphics.fillArc(XPosition, YPosition, width, height, 0, 360);
         graphics.setColor(255,0,0);
-        graphics.fillArc(90, 50, 10, 10, 0, 360);
+        
+        graphics.fillArc(xTest, yTest, wTest, hTest, 0, 360);
+//        graphics.drawString("Score", score, 10, 10);
+        
+        
+        showScore(graphics);
+        
+    }
+    
+    void showScore(Graphics graphics){
+        
+        graphics.setColor(255,255,255);
+        
+        String score1 = String.valueOf(score);
+        
+        graphics.setColor(255, 0, 0);
+        graphics.drawString("Score : " + score1, getWidth()/3, 0,0);
+//        if(isIntersection(xTest, yTest, wTest, hTest)){
+//           score += 5;
+//        }
+        
     }
     
     protected void runGame(){
         checkBoundaries();
-//        collision();
+        getDistance();
+        
         switch(positionChange){
             case LEFT:
-                XPosition  -= xVelocity;
-//                YPosition  -= yVelocity;
+                XPosition -= xVelocity;
                 break;
             case RIGHT:
                  XPosition += xVelocity;
-//                 YPosition += yVelocity;
                 break;
             case UP:
-                YPosition -= yVelocity;
-//                XPosition -= xVelocity;
+                YPosition = YPosition - yVelocity;
             case DOWN:
-                YPosition += yVelocity;
-//                XPosition += xVelocity;
+                YPosition = YPosition + yVelocity;
             
             
         }
         repaint();
     }
     
-//    public boolean collision(Sprite s){
-//        
-//        s.collidesWith(s, true)
-//        
-//    }
-    
-    public int checkBoundaries(){
-        //BOUNDS
+    public void checkBoundaries(){
+        //bounce
         if(XPosition < xBounds){
             XPosition = xBounds;
             xVelocity = -xVelocity;
         }
-        else if((XPosition + getWidth()/2) > (xBounds + wBounds)){
+        else if((XPosition + getWidth()/5) > (xBounds + wBounds)){
             
-            XPosition = xBounds + wBounds - getWidth()/2;
+            XPosition = xBounds + wBounds - getWidth()/5;
             xVelocity = -xVelocity;
             
         }
@@ -223,36 +245,113 @@ class MovingCanvas extends Canvas implements Runnable, CommandListener{
             YPosition = yBounds;
             yVelocity = -yVelocity;
         }
-        else if(YPosition + getHeight()/2 > (yBounds + hBounds)){
+        else if(YPosition + getHeight()/5 > (yBounds + hBounds)){
             
-            YPosition = yBounds + hBounds - getHeight()/2;
+            YPosition = yBounds + hBounds - getHeight()/5;
             yVelocity = -yVelocity;
             
         }
+        //wrap
+//        if((XPosition + getWidth()/2) < xBounds){
+//            
+//            XPosition = xBounds + wBounds;
+//            
+//        }
+//        else if(XPosition > (xBounds + wBounds)){
+//            
+//            XPosition = xBounds- getWidth()/2;
+//            
+//        }
+//        if((YPosition + getHeight()/2) < yBounds){
+//            
+//            YPosition = yBounds + hBounds;
+//            
+//        }
+//        else if(YPosition > (yBounds + hBounds)){
+//            
+//            YPosition = yBounds - getWidth()/2;
+//            
+//        }
+        //kill
+//        if((XPosition + getWidth()/2) < xBounds || XPosition > (xBounds + wBounds) || (YPosition + getHeight()/2) < yBounds || YPosition > (yBounds + hBounds)){
+//            
+//        }
+//          // Stop
+//          if(XPosition < xBounds || XPosition > (xBounds + wBounds - getWidth()/2)){
+//              
+//              XPosition = Math.max(xBounds, Math.min(XPosition, (xBounds + wBounds - getWidth()/2)));
+//              xVelocity = 0;
+//              yVelocity = 0;
+//          }
+//          
+//          if(YPosition < yBounds || YPosition > (yBounds + hBounds - getHeight()/2)){
+//              
+//              YPosition = Math.max(yBounds, Math.min(YPosition, (yBounds + hBounds - getHeight()/2)));
+//              xVelocity = 0;
+//              yVelocity = 0;
+//              
+//          }
+        
+    }
+    
+    void getDistance(){
+        
+        int x1 = XPosition;
+        int y1 = YPosition;
+        int x2 = xTest;
+        int y2 = yTest;
+        
+        int r1 = width / 2;
+        int r2 = wTest / 2;
+        
+        int dx = x2 - x1;
+        int dy = y2 - y1;
+        
+        isIntersection(dx, dy, r1, r2);
+        
+        
+    }
+    
+    public boolean isIntersection(int x, int y, int r11, int r22){
+        int a = x;
+        int b = y;
+        int r1 = r11;
+        int r2 = r22;
+        distance = (int)Math.sqrt((a * a) + (b * b));
+        if(distance < r1 + r2){
+            
+            
+            score += 5;
+            stop(r11, r22);
+            return true;
+            
+        }
+        return false;
+        
+    }
+    
+    public void stop(int a, int b){
 
-//     if((XPosition + getWidth()/2) < xBounds){
-//        
-//        XPosition = xBounds + wBounds;
-//        
-//    }
-//    if(XPosition  > (xBounds + wBounds)){
-//        XPosition = xBounds - getWidth()/2;
-//    }
-//    if((YPosition + getHeight()/2) < yBounds){
-//        
-//        YPosition = yBounds + hBounds;
-//        
-//    }
-//    if(YPosition  > (yBounds + hBounds)){
-//        YPosition = yBounds - getWidth()/2;
-//    } 
-    if((XPosition + width) < xBounds || XPosition > wBounds || (YPosition + height) < yBounds || YPosition > yBounds){
-        return 1;
+        if((wTest + width) == (2 * a) + (2 * b))
+        {
+           
+            Alert alert = new Alert("Game over", "score: " + score , null, null);
+            alert.setTimeout(Alert.FOREVER);
+            display.setCurrent(alert);
+             try{
+                Thread.sleep(100000);
+            }
+            catch(InterruptedException e){
+                e.toString();
+            }
+        }
+        
+        
+        
+        
     }
-              return 0;  
-    }
-    
-    
+            
+                   
     
     
     
@@ -263,15 +362,15 @@ class MovingCanvas extends Canvas implements Runnable, CommandListener{
         
         switch(getGameAction(keyCode)){
             
-            case Canvas.LEFT:
+            case LEFT:
                 positionChange  = LEFT;
                 break;
-            case Canvas.RIGHT:
+            case RIGHT:
                 positionChange = RIGHT;
                 break;
-            case Canvas.UP:
+            case UP:
                 positionChange = UP;
-            case Canvas.DOWN:
+            case DOWN:
                 positionChange = DOWN;
                 
             
@@ -288,5 +387,10 @@ class MovingCanvas extends Canvas implements Runnable, CommandListener{
             
         }
         
-    }  
+    }
+      
+    
+    
+    
+    
 }
