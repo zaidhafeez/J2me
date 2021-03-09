@@ -70,13 +70,12 @@ class AGameCanvas extends GameCanvas implements Runnable{
         
         super(true);
         this.animaton = animaton;
-        thread = new Thread(this, "Game Canvas");
-        thread.start();
+        
         
         mLayerManager = new LayerManager();
         int w = getWidth();
         int h = getHeight();
-        mLayerManager.setViewWindow(96, 48, w, h);
+        mLayerManager.setViewWindow(96, 0, w, h);
         
         mtrucking = true;
         
@@ -84,6 +83,8 @@ class AGameCanvas extends GameCanvas implements Runnable{
         createBackground();
         createHero();
         
+        thread = new Thread(this, "Game Canvas");
+        thread.start();
     }
     
     private void createBackground() throws IOException{
@@ -91,37 +92,36 @@ class AGameCanvas extends GameCanvas implements Runnable{
         Image backgroundImage = Image.createImage("/11.jpg");
         
         int[] map = {
-        0, 0, 0, 0, 0, 0,
-        0, 0, 0, 0, 0, 0,
-        1, 2, 0, 0, 0, 0,
-        3, 3, 2, 0, 0, 0,
-        3, 3, 3, 2, 4, 1,
-        5, 7, 4, 0, 5, 5,
-        4, 4, 4, 4, 4, 4,
-        6, 9, 1, 0, 0, 0,
-        0, 6, 6, 6, 5, 5,
-        10, 10, 10, 10, 10, 10   
+        5, 1, 1, 4, 1, 1, 1, 1, 1, 6,
+        5, 1, 3, 1, 1, 3, 1, 1, 1, 6,
+        5, 1, 2, 1, 1, 2, 1, 1, 1, 6,
+        5, 1, 2, 3, 1, 2, 1, 1, 1, 6,
+        5, 1, 4, 2, 1, 2, 1, 1, 1, 6,
+        5, 1, 1, 4, 1, 2, 1, 1, 1, 6,
+        5, 1, 1, 1, 1, 4, 1, 1, 1, 6,
+        5, 1, 1, 1, 1, 1, 1, 1, 1, 6,
+        5, 1, 1, 1, 1, 1, 1, 1, 1, 6,
+        5, 1, 1, 1, 1, 1, 1, 1, 1, 6   
     };
         
         
-        mBackground = new TiledLayer(10, 6, backgroundImage, 60, 60);
-        System.out.println(backgroundImage.getWidth());
-        System.out.println(backgroundImage.getHeight());
+        mBackground = new TiledLayer(10, 10, backgroundImage, 32, 32);
+//        System.out.println(backgroundImage.getWidth());
+//        System.out.println(backgroundImage.getHeight());
         
         mBackground.setPosition(12, 0);
 //        System.out.println(mBackground.getCell(5, 3));
         for(int i = 0; i < map.length; i++){
             System.out.println(map.length);
             int column = i % 10;
-            int row = (i - column) % 10;
-            mBackground.paint(g);
+            int row = (i - column) / 10;
+//            mBackground.paint(g);
             
-//            mBackground.setCell(column, row, map[i]);
-            System.out.println(mBackground.getCell(5, 3));
+            mBackground.setCell(column, row, map[i]);
             
         }
         
-        mAnimatedIndex = mBackground.createAnimatedTile(8);
+        mAnimatedIndex = mBackground.createAnimatedTile(10);
         mBackground.setCell(3, 0, mAnimatedIndex);
         mBackground.setCell(5, 0, mAnimatedIndex);
         mLayerManager.append(mBackground);
@@ -129,7 +129,7 @@ class AGameCanvas extends GameCanvas implements Runnable{
     
     private void createAtmosphere() throws IOException{
         
-        Image atmosphereImage = Image.createImage("/11.jpg");
+        Image atmosphereImage = Image.createImage("/sky.png");
         mAtmosphere = new TiledLayer(8, 1, atmosphereImage, atmosphereImage.getWidth(), atmosphereImage.getHeight());
         mAtmosphere.fillCells(0, 0, 8, 1, 1);
         mAtmosphere.setPosition(0, 192);
@@ -139,7 +139,7 @@ class AGameCanvas extends GameCanvas implements Runnable{
     
     private void createHero() throws IOException{
         
-        Image heroImage = Image.createImage("/hero");
+        Image heroImage = Image.createImage("/hero.png");
         hero = new Sprite(heroImage, 48, 48);
         hero.setPosition(96 + (getWidth() - 48) / 2, 192);
         hero.defineReferencePixel(24, 24);
@@ -271,19 +271,19 @@ class AGameCanvas extends GameCanvas implements Runnable{
         
     }
     
-    public void setVisible(int layerIndex, boolean  show){
-        
-        Layer layer = mLayerManager.getLayerAt(layerIndex);
-        layer.setVisible(show);
-        
-    }
-    
-    public boolean isVisible(int layerIndex){
-        
-        Layer layer = mLayerManager.getLayerAt(layerIndex);
-        return layer.isVisible();
-        
-    }
+//    public void setVisible(int layerIndex, boolean  show){
+//        
+//        Layer layer = mLayerManager.getLayerAt(layerIndex);
+//        layer.setVisible(show);
+//        
+//    }
+//    
+//    public boolean isVisible(int layerIndex){
+//        
+//        Layer layer = mLayerManager.getLayerAt(layerIndex);
+//        return layer.isVisible();
+//        
+//    }
         
 }
     
