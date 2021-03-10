@@ -50,10 +50,11 @@ public class AudioMidlet extends MIDlet implements CommandListener, Runnable{
         }
         else{
             
-            Form waitForm = new Form("LOADING...");
-            display.setCurrent(waitForm);
             Thread thread = new Thread(this);
             thread.start();
+            Form waitForm = new Form("LOADING...");
+            display.setCurrent(waitForm);
+            
             
         }
         
