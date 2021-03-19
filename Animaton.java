@@ -1,3 +1,5 @@
+package awareness;
+
 /*
  * To change this license header, choose License Headers in Project Properties.
  * To change this template file, choose Tools | Templates
@@ -37,7 +39,7 @@ public class Animaton extends MIDlet implements CommandListener {
         exitCmd = new Command("Exit", Command.EXIT, 1);
         form.append(new Spacer(50, 100));
         
-        splash = new ImageItem("Canvas Exploration", null, ImageItem.LAYOUT_CENTER, null);
+        splash = new ImageItem("Walk bhi Awareness bhi", null, ImageItem.LAYOUT_CENTER, null);
 //        splash.setDefaultCommand(
 //         new Command("Set", Command.ITEM, 1)); 
 //     // icl is ItemCommandListener   
@@ -45,7 +47,7 @@ public class Animaton extends MIDlet implements CommandListener {
          
         try{
             
-            Image image = Image.createImage("/hero.png");
+            Image image = Image.createImage("/awareness/splash1.png");
             splash.setImage(image);
             
         }
@@ -107,7 +109,7 @@ public class Animaton extends MIDlet implements CommandListener {
         
     }
 }
-class AGameCanvas extends GameCanvas implements Runnable{
+class AGameCanvas extends GameCanvas implements Runnable,CommandListener{
     
     Animaton animaton;
     BoxInterval boxInterval;
@@ -115,7 +117,7 @@ class AGameCanvas extends GameCanvas implements Runnable{
     
     Display display;
     Form form;
-    
+    int i = 0;
     
     private boolean mtrucking;
     
@@ -134,10 +136,11 @@ class AGameCanvas extends GameCanvas implements Runnable{
     
     private static final int[] kRunningSequence = {0, 1, 2};
     private static final int[] kStandingSequence = {3};
-    
+    String[] manMsg1 = {"Hii...Bob, How Are You?","Hello....Aamir I am fine..!","Have You heard About Vaccination in our area?","Yes, I have listen that","Good, Vaccines work by exposing you to a safe version of a disease.","Yes.","When the body responds to the vaccine","it builds an adaptive immune response","Okay Thanks for the information and i will go for a vaccination trial.","Sure...!! ", "It's like of Walk Bhi Awareness bhi", "Yeah...Okay I am Going,Good Bye.","Good Bye...!!"};
     int count = 0;
+    int totalCount = manMsg1.length;
     int x1,y1,x2,y2,x3,y3;
-    
+    Command exit;
     Thread thread;
     
     public AGameCanvas(Display start, Form stform) throws IOException{
@@ -156,9 +159,13 @@ class AGameCanvas extends GameCanvas implements Runnable{
         
         createBackground();
         createHero();
-         boxInterval = new BoxInterval(this);
-         timer = new Timer();
-         timer.scheduleAtFixedRate(boxInterval, 5000, 5000); 
+        boxInterval = new BoxInterval(this);
+        timer = new Timer();
+        timer.scheduleAtFixedRate(boxInterval, 4000, 7000); 
+        
+        exit = new Command("Exit", Command.EXIT, 0);
+        addCommand(exit);
+        setCommandListener(this);
         
         
         thread = new Thread(this, "Game Canvas");
@@ -169,7 +176,7 @@ class AGameCanvas extends GameCanvas implements Runnable{
     private void createBackground() throws IOException{
         
         Graphics g = getGraphics();
-        Image backgroundImage = Image.createImage("/background.png");
+        Image backgroundImage = Image.createImage("/awareness/background.png");
         
         int[][] map =  {{1,2,3,4,5,6,7,8,9,10},
                        {11,12,13,14,15,16,17,18,19,20},
@@ -204,7 +211,7 @@ class AGameCanvas extends GameCanvas implements Runnable{
     private void createHero() throws IOException{
         
         
-        Image heroImage = Image.createImage("/hero.png");
+        Image heroImage = Image.createImage("/awareness/hero.png");
 
         bob = new Sprite(heroImage, 48, 48);
         
@@ -359,7 +366,7 @@ public boolean checkBoundary(){
 
             try {
 
-                amirImage = Image.createImage("/hero.png");
+                amirImage = Image.createImage("/awareness/hero.png");
                 amir = new Sprite(amirImage, 48, 48);
 
                 amir.setPosition(getWidth() + 96, 192);
@@ -372,10 +379,13 @@ public boolean checkBoundary(){
 //                }
                  drawRectangle();
                  drawTriangle();
+                 drawDialog();
+                 
+                
                  
                       
                     
-                     System.err.println("Abc");
+//                     System.err.println("Abc");
                      
 //                     try{
 //                         thread.interrupt();
@@ -429,6 +439,49 @@ public boolean checkBoundary(){
         
     }
     
+    public void drawDialog(){
+        
+        Graphics g = getGraphics();
+        
+//        String[] manMsg1 = {"Hii...Bob, How Are You?","Hello....Aamir I am fine..!","Have You heard About Vaccination in our area?","Yes, I have listen that","Good, Vaccines work by exposing you to a safe version of a disease.","Yes.","When the body responds to the vaccine","it builds an adaptive immune response","Okay Thanks for the information and i will go for a vaccination trial.","Sure...!! ", "It's like of Walk Bhi Awareness bhi", "Yeah...Okay I am Going,Good Bye.","Good Bye...!!"};
+//        System.out.println(manMsg1[2]);
+        
+            
+            
+                g.setColor(0, 255, 0);
+                g.setFont(Font.getFont(Font.FACE_SYSTEM, Font.STYLE_BOLD, Font.SIZE_MEDIUM));
+                g.drawString(manMsg1[i], 0, getHeight()/2, Graphics.TOP | Graphics.LEFT);
+//                System.out.println(i);
+//                System.out.println(manMsg1[i].length());
+//                if(totalCount == 0){
+//
+//                    timer.cancel();
+//                    Alert alert = new Alert("Animation end", "Story is End ", null, AlertType.INFO);
+//                    alert.setTimeout(Alert.FOREVER);
+//                    display.setCurrent(alert);
+//                    System.out.println("Zaid");
+
+//        } 
+                 
+                
+            
+            
+        
+    }
+    
+    public void commandAction(Command command, Displayable displayable){
+        
+        if(command == exit){
+            
+            Alert alert = new Alert("Animation end", "Story is End ", null, AlertType.INFO);
+            alert.setTimeout(Alert.FOREVER);
+            display.setCurrent(alert);
+            
+            
+        }
+        
+    }
+    
 
 }
 class BoxInterval extends TimerTask{
@@ -437,22 +490,30 @@ class BoxInterval extends TimerTask{
     public BoxInterval(AGameCanvas aGameCanvas)
     {
         this.aGameCanvas=aGameCanvas;
-
+        
     }
 
     public void run() {
         
        
         aGameCanvas.trianglePosition();
+        
 //       aGameCanvas.x3 = aGameCanvas.getWidth()/4;
 //       aGameCanvas.y3 = 3 * aGameCanvas.getHeight() / 4;
 //        aGameCanvas.repaint();
-
+//         aGameCanvas.drawDialog();
+        aGameCanvas.i++;
+        aGameCanvas.totalCount--;
+        
+        
         try {
 
-            Thread.sleep(2500);
+            Thread.sleep(3200);
              aGameCanvas.x3 = aGameCanvas.getWidth()/4;
-                aGameCanvas.y3 = 3 * aGameCanvas.getHeight() / 4;
+             aGameCanvas.y3 = 3 * aGameCanvas.getHeight() / 4;
+             aGameCanvas.i++;
+             aGameCanvas.totalCount--;
+             System.out.println(aGameCanvas.totalCount);
 //            aGameCanvas.repaint();
 //            aGameCanvas.thread.interrupt();
 //
@@ -461,6 +522,7 @@ class BoxInterval extends TimerTask{
 //            ex.printStackTrace();
 //
         }
+       
 
     }
 
